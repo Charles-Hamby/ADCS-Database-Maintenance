@@ -61,8 +61,8 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	# Date: 11/1/2019 (V1.3) Clean up
 	# Date: 11/6/2019 (V1.4) Added Defrag parameter and Logging
 	# Date: 10/06/2021 (V1.5) Added -ExpiredDays parameter to delete expired following certain amount of days.
-    # Date: 11/29/2021 (V1.6) Added Event Logging in EventVwr & Log each expired cert that is going to be deleted at runtime
-    # Current Version: 1.6
+    	# Date: 11/29/2021 (V1.6) Added Event Logging in EventVwr & Log each expired cert that is going to be deleted at runtime
+    	# Current Version: 1.6
 	#
 	# Usage: Removing all failed and expired requests and defragmentation of the Database
 	#
@@ -80,8 +80,8 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 		[Parameter(Mandatory=$false )][String]$LogFile="CA-DB-Maintenance.log"
 	);
 	
-    #Preload Required Modules
-    Import-Module Logging
+    	#Preload Required Modules
+    	Import-Module Logging
 
 	# Clear screen
 	Clear-Host;
@@ -101,40 +101,40 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	# Function LogWrite
 	Function LogWrite {
 	
-		Param ([string]$LogString);
+	Param ([string]$LogString);
 		
-			# Check if CA log folder exists	
-			if(!(Test-Path -Path $LogDir)) {
+	# Check if CA log folder exists	
+	if(!(Test-Path -Path $LogDir)) {
 	
-				# Create folder if not exist
-				New-Item -ItemType directory -Path $LogDir | Out-Null;
+		# Create folder if not exist
+		New-Item -ItemType directory -Path $LogDir | Out-Null;
 		
-			}; # End of CA log
+	}; # End of CA log
 		
-			#$Date = Get-Date -Format u;
-			$Date = Get-Date -Format o | foreach {$_ -replace ":", "."};
-			Add-content "$LogDir\$LogFile" -Value "$Date| $LogString";
+	#$Date = Get-Date -Format u;
+	$Date = Get-Date -Format o | foreach {$_ -replace ":", "."};
+	Add-content "$LogDir\$LogFile" -Value "$Date| $LogString";
 	
 	}; # End Function LogWrite
 
-    #Start Logging
-    Start-Log -EventId 4000 -EventLog "CA Database Maintenance" -ScriptName "delete-failed-requests-V1.6.ps1"
+    	#Start Logging
+    	Start-Log -EventId 4000 -EventLog "CA Database Maintenance" -ScriptName "delete-failed-requests-V1.6.ps1"
 
 	# Checking the CA database status
 	Write-Host "";
 	Write-Host "=== CA Database Maintenance ===" -ForegroundColor "Green";
 	LogWrite "=== Start CA Database Maintenance ===";
-    Write-Log -Level Information -EventId 4001 -Message @{
+    	Write-Log -Level Information -EventId 4001 -Message @{
         Message = "Start CA Database Maintenance"
     
-    };
+    	};
 	Write-Host "";
 	$srvName = "Active Directory Certificate Services";
 	Write-Host "Checking the $srvName status..." -ForegroundColor "Yellow";
 	LogWrite "Checking the $srvName status...";
-    Write-Log -Level Information -EventId 4002 -Message @{
+    	Write-Log -Level Information -EventId 4002 -Message @{
         Message = "Checking the $srvName status..."
-    };
+    	};
 
 	# 5 second wait
 	Start-Sleep -s 5;
@@ -148,29 +148,29 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	# Check is Service is stopped.
 	if ($servicePrior.status -eq "Stopped") {
 
-		# Starting the CA
-		Start-Service certsvc;
-		Write-Host "Starting the $srvName and wait for 60 seconds to make sure it has been started." -ForegroundColor "Yellow";
-		LogWrite "Starting the $srvName and wait for 60 seconds to make sure it has been started.";
+	# Starting the CA
+	Start-Service certsvc;
+	Write-Host "Starting the $srvName and wait for 60 seconds to make sure it has been started." -ForegroundColor "Yellow";
+	LogWrite "Starting the $srvName and wait for 60 seconds to make sure it has been started.";
         Write-Log -Level Information -EventId 4003 -Message @{
         Message = "Starting the $srvName and wait for 60 seconds to make sure it has been started."
         };
-		Write-Host "";
+	Write-Host "";
 		
-		# 15 second wait
-		Start-Sleep -s 60;
+	# 15 second wait
+	Start-Sleep -s 60;
 		
-		# Check status
-		$srvName = "Active Directory Certificate Services";
-		$servicePrior = Get-Service $srvName;
-		$dbstatus = $servicePrior.status;
-		Write-Host "";
-		Write-Host "$srvName is now $dbstatus." -ForegroundColor "Yellow";
-		LogWrite "$srvName is now $dbstatus";
+	# Check status
+	$srvName = "Active Directory Certificate Services";
+	$servicePrior = Get-Service $srvName;
+	$dbstatus = $servicePrior.status;
+	Write-Host "";
+	Write-Host "$srvName is now $dbstatus." -ForegroundColor "Yellow";
+	LogWrite "$srvName is now $dbstatus";
         Write-Log -Level Information -EventId 4004 -Message @{
         Message = "$srvName is now $dbstatus"
         };
-		Write-Host "";
+	Write-Host "";
 		
 	};
 	
@@ -195,7 +195,7 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	$CADatabaseSize = (Get-ChildItem -Path "$CADataBaseLocation" -Recurse -Filter "$CADataBaseName").length/1MB;
 	Write-Host "Pre-maintenance Database size: $CADatabaseSize MB" -ForegroundColor "Yellow";
 	LogWrite "Pre-maintenance Database size: $CADatabaseSize MB";
-    Write-Log -Level Information -EventId 4005 -Message @{
+    	Write-Log -Level Information -EventId 4005 -Message @{
         Message = "Pre-maintenance Database size: $CADatabaseSize MB"
         };
 
@@ -206,7 +206,7 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	Write-Host "";
 	Write-Host "# Checking for failed requests... #" -ForegroundColor "Green";
 	LogWrite "Checking for failed requests...";
-    Write-Log -Level Information -EventId 4010 -Message @{
+    	Write-Log -Level Information -EventId 4010 -Message @{
         Message = "Checking for failed requests..."
         };
 	Write-Host "";
@@ -226,7 +226,7 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	$Count = ($Count[1]).Split("Maximum Row Index");
 	Write-Host "Total of Failed Requests:$Count" -ForegroundColor "Yellow";
 	LogWrite "Total of Failed Requests:$Count";
-    Write-Log -Level Information -EventId 4011 -Message @{
+    	Write-Log -Level Information -EventId 4011 -Message @{
         Message = "Total of Failed Requests:$Count"
         };
 	Write-Host "";
@@ -236,11 +236,11 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 		
 		Write-Host "";
 		Write-Host "# Deleting failed requests #" -ForegroundColor "Green";
-        Write-Log -Level Information -EventId 4012 -Message @{
-        Message = "Deleting failed requests"
-        };
+		Write-Log -Level Information -EventId 4012 -Message @{
+		Message = "Deleting failed requests"
+		};
 		Write-Host "";
-		
+
 		# Loop to delete failed requests
 		foreach ($f in $FailedRequest) {
 
@@ -255,27 +255,29 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 
 			# Convert Hex to Decimal
 			$dec=[Convert]::ToInt32($k,16);
-			
+
 			# Delete the rows and surpress the output
 			.$certutil '-deleterow' $dec | Out-Null;
-			
+
 			# Create a custom std output
 			if ($i -match "0x") {
-			
+
 				Write-Host "Failed request with RequestID $dec deleted" -ForegroundColor "Yellow";
-			
-			} else {
+
+			} 
+			else {
 
 				Write-Host "";
 				Write-Host "There are no failed requests found in the database." -ForegroundColor "Red";
 				LogWrite "There are no failed requests found in the database.";
-                Write-Log -Level Information -EventId 4013 -Message @{
-                    Message = "There are no failed requests found in the database."
-                };
-				Write-Host "";
+				Write-Log -Level Information -EventId 4013 -Message @{
+				    Message = "There are no failed requests found in the database."
+				};
 			
+			Write-Host "";
+
 			};
-			
+
 		};
 
 	}; # End loop to delete failed requests
@@ -290,9 +292,9 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 			Write-Host "";
 			Write-Host "No expired certificates found." -ForegroundColor "Yellow";
 			LogWrite "No expired certificates found.";
-            Write-Log -Level Information -EventId 4020 -Message @{
-                Message = "No expired certificates found."
-            };
+            		Write-Log -Level Information -EventId 4020 -Message @{
+                	Message = "No expired certificates found."
+           		 };
 			Write-Host "";
 			
 		} else {
@@ -300,15 +302,15 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 			$DelExpired = $DelExpired[0].Split(":")[1].Trim();
 			Write-Host "";
 			Write-Host "# Deleting expired certificates #" -ForegroundColor "Green";
-            Write-Log -Level Information -EventId 4021 -Message @{
-                Message = "Deleting expired certificates"
-            };
+            		Write-Log -Level Information -EventId 4021 -Message @{
+                		Message = "Deleting expired certificates"
+            		};
 			Write-Host "";
 			Write-Host "Total of expired certificates deleted: $DelExpired" -ForegroundColor "Yellow";
 			LogWrite "Total of expired certificates deleted: $DelExpired";
-            Write-Log -Level Information -EventId 4022 -Message @{
-                Message = "Total of expired certificates deleted: $DelExpired"
-            };
+            		Write-Log -Level Information -EventId 4022 -Message @{
+                		Message = "Total of expired certificates deleted: $DelExpired"
+            		};
 			Write-Host "";
 			
 		};
@@ -326,13 +328,13 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 		
         if ($ExpiredCerts.count -eq 1) {
 		
-			Write-Host "";
-			Write-Host "No expired certificates found." -ForegroundColor "Yellow";
-			LogWrite "No expired certificates found.";
-            Write-Log -Level Information -EventId 4020 -Message @{
-                Message = "No expired certificates found."
-            };
-
+		Write-Host "";
+		Write-Host "No expired certificates found." -ForegroundColor "Yellow";
+		LogWrite "No expired certificates found.";
+            	Write-Log -Level Information -EventId 4020 -Message @{
+                	Message = "No expired certificates found."
+            	};
+	
         }Else { 
         
             Foreach ($c in $ExpiredCerts) {
@@ -353,42 +355,43 @@ Prerequisite   : PowerShell V2 over Vista and upper.
                         Add = "'$ccommonname','$cserialnumber','$cexpirationdate','$ccertificatetemplate'"
                     };
                     
-                }; #End else line 344
+                };
            
             
-            }; #End Foreach line 337
+            };
 
             $DelExpired = .$certutil '-deleterow' $ExpiredDays Cert;
 		
-		        if ($DelExpired -match "Rows deleted: 0" ) {
+		if ($DelExpired -match "Rows deleted: 0" ) {
 		
-			        Write-Host "";
-			        Write-Host "No expired certificates found." -ForegroundColor "Yellow";
-			        LogWrite "No expired certificates found.";
-                    Write-Log -Level Information -EventId 4020 -Message @{
-                        Message = "No expired certificates found."
-                    };
-			        Write-Host "";
+			Write-Host "";
+			Write-Host "No expired certificates found." -ForegroundColor "Yellow";
+			LogWrite "No expired certificates found.";
+                    	Write-Log -Level Information -EventId 4020 -Message @{
+                       		Message = "No expired certificates found."
+                    	};
+			Write-Host "";
 
                 } else {
 			
-			        $DelExpired = $DelExpired[0].Split(":")[1].Trim();
-			        Write-Host "";
-			        Write-Host "# Deleting expired certificates #" -ForegroundColor "Green";
-                    Write-Log -Level Information -EventId 4021 -Message @{
-                        Message = "Deleting expired certificates"
-                    };
-			        Write-Host "";
-			        Write-Host "Total of expired certificates deleted: $DelExpired" -ForegroundColor "Yellow";
-		            LogWrite "Total of expired certificates deleted: $DelExpired";
-                    Write-Log -Level Information -EventId 4022 -Message @{
-                        Message = "Total of expired certificates deleted: $DelExpired"
-                    };
-			        Write-Host "";
+			$DelExpired = $DelExpired[0].Split(":")[1].Trim();
+			Write-Host "";
+			Write-Host "# Deleting expired certificates #" -ForegroundColor "Green";
+                    	Write-Log -Level Information -EventId 4021 -Message @{
+                        	Message = "Deleting expired certificates"
+                    	};
 			
-		       };
+			Write-Host "";
+			Write-Host "Total of expired certificates deleted: $DelExpired" -ForegroundColor "Yellow";
+		        LogWrite "Total of expired certificates deleted: $DelExpired";
+                    	Write-Log -Level Information -EventId 4022 -Message @{
+                        	Message = "Total of expired certificates deleted: $DelExpired"
+                    	};
+			Write-Host "";
+			
+		};
 
-        } #End Else 335
+        	}
 		
 	}; # End of check $ExpiredDays
 
@@ -399,20 +402,16 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	$i=($dblocation.tostring()).Split(":");
 	$dblocation = ($i[1]).Replace("44","").Trim();
 	
-
-	# 
 	# Defragmenting the database
-	#
-
 	if ($Defrag -eq $true) {
 
 		# Stopping the CA
 		Write-Host "";
 		Write-Host "Stopping the $srvName in order to defragment the database..." -ForegroundColor "Yellow";
 		LogWrite "Stopping the $srvName in order to defragment the database...";
-        Write-Log -Level Information -EventId 4030 -Message @{
-                Message = "Stopping the $srvName in order to defragment the database..."
-            };
+        	Write-Log -Level Information -EventId 4030 -Message @{
+                	Message = "Stopping the $srvName in order to defragment the database..."
+            	};
 		Stop-Service certsvc;
 
 		# Check CA status
@@ -422,9 +421,9 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 		Write-Host "";
 		Write-Host "$srvName is $Servicestatus" -ForegroundColor "Yellow";
 		LogWrite "$srvName is $Servicestatus";
-        Write-Log -Level Information -EventId 4031 -Message @{
-            Message = "Defrag - $srvName is $Servicestatus"
-        };
+        	Write-Log -Level Information -EventId 4031 -Message @{
+            		Message = "Defrag - $srvName is $Servicestatus"
+        	};
 		Write-Host "";
 
 		# Change directory
@@ -432,9 +431,9 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 
 		# Defragmenting the database
 		.\eseutil /d "$dblocation";
-        Write-Log -Level Information -EventId 4032 -Message @{
-            Message = "Defrag - Defragmenting the database"
-        };
+        	Write-Log -Level Information -EventId 4032 -Message @{
+            		Message = "Defrag - Defragmenting the database"
+        	};
 
 		cd ..;
 	
@@ -442,18 +441,18 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 		$CADatabaseSize = (Get-ChildItem -Path "$CADataBaseLocation" -Recurse -Filter "$CADataBaseName").length/1MB;
 		Write-Host "Database size after defragmentation: $CADatabaseSize MB" -ForegroundColor "Yellow";
 		LogWrite "Database size after defragmentation: $CADatabaseSize MB";
-        Write-Log -Level Information -EventId 4033 -Message @{
-            Message = "Database size after defragmentation: $CADatabaseSize MB"
-        };
+        	Write-Log -Level Information -EventId 4033 -Message @{
+            		Message = "Database size after defragmentation: $CADatabaseSize MB"
+        	};
 		Write-Host "";
 		
 		# Starting the CA
 		Start-Service certsvc;
 		Write-Host "Starting the $srvName and wait for 60 seconds to make sure it has been started." -ForegroundColor "Yellow";
 		LogWrite "Starting the CA";
-        Write-Log -Level Information -EventId 4034 -Message @{
-            Message = "Defrag - Starting the CA"
-        };
+        	Write-Log -Level Information -EventId 4034 -Message @{
+            		Message = "Defrag - Starting the CA"
+        	};
 		Write-Host "";
 		
 		# 60 second wait
@@ -465,24 +464,24 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 		Write-Host "";
 		Write-Host "$srvName is now $Servicestatus" -ForegroundColor "Green";
 		LogWrite "$srvName is now $Servicestatus";
-        Write-Log -Level Information -EventId 4035 -Message @{
-            Message = "Defrag - $srvName is now $Servicestatus"
-        };
+        	Write-Log -Level Information -EventId 4035 -Message @{
+            		Message = "Defrag - $srvName is now $Servicestatus"
+        	};
 		Write-Host "";
-        Write-Log -Level Information -EventId 4036 -Message @{
-            Message = "Defragmentation process is now complete"
-        };
+        	Write-Log -Level Information -EventId 4036 -Message @{
+            		Message = "Defragmentation process is now complete"
+        	};
 		
 	}; # End of Defrag
     
-    # CA Database size after
-		$CADatabaseSize = (Get-ChildItem -Path "$CADataBaseLocation" -Recurse -Filter "$CADataBaseName").length/1MB;
-		Write-Host "Database size after CA Maintenance: $CADatabaseSize MB" -ForegroundColor "Yellow";
-		LogWrite "Database size after CA Maintenance: $CADatabaseSize MB";
+    	# CA Database size after
+	$CADatabaseSize = (Get-ChildItem -Path "$CADataBaseLocation" -Recurse -Filter "$CADataBaseName").length/1MB;
+	Write-Host "Database size after CA Maintenance: $CADatabaseSize MB" -ForegroundColor "Yellow";
+	LogWrite "Database size after CA Maintenance: $CADatabaseSize MB";
         Write-Log -Level Information -EventId 4006 -Message @{
             Message = "Database size after CA Maintenance: $CADatabaseSize MB"
         };
-		Write-Host "";
+	Write-Host "";
 
 	# Stop stopwatch
 	$totalTime.Stop();
@@ -491,16 +490,16 @@ Prerequisite   : PowerShell V2 over Vista and upper.
 	Write-Host "";
 	Write-Host "Total process time: $totalTime" -ForegroundColor "Yellow";
 	LogWrite "Total process time: $totalTime";
-    Write-Log -Level Information -EventId 4007 -Message @{
-    Message = "Total process time: $totalTime"
-    };
+    	Write-Log -Level Information -EventId 4007 -Message @{
+    		Message = "Total process time: $totalTime"
+    	};
 	Write-Host "";
 	cd \scripts;
 	Write-Host "=== Done ===" -ForegroundColor "Green";
 	LogWrite "=== Done ===";
-    Write-Log -Level Information -EventId 4008 -Message @{
-    Message = "CA DB Maintenance Script Done"
-    };
+    	Write-Log -Level Information -EventId 4008 -Message @{
+   		Message = "CA DB Maintenance Script Done"
+    	};
 	Write-Host "";
 	
 	##############################################################################
