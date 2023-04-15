@@ -9,7 +9,7 @@ Delete Failed Requests and Expired Certificates from database by using the -Fail
 
 .NOTES
 Version        : 1.6
-File Name      : delete-failed-requests-V1.6.ps1 
+File Name      : delete-failed-requests-V1.6.ps1
 Author         : Charles Hamby
 Prerequisite   : PowerShell V2 over Vista and upper.
 
